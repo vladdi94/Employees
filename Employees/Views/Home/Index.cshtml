@@ -10,7 +10,16 @@
         <tr>
             <td>@item.FullName</td>
             <td>@item.PhoneNuber</td>
+            <td>@item.Photo</td>
             <td>@item.DepartmentModel?.Name</td>
+            <td>
+                <a asp-action="Edit" asp-controller="Home" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td>
+                <form asp-controller="Home" asp-action="Delete" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" />
+                </form>
+            </td>
         </tr>
     }
 </table>

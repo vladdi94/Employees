@@ -24,7 +24,7 @@ namespace Employees.Controllers
         /// <summary>
         /// Добавление сотрудника
         /// </summary>
-        /// <param name="companyModel"></param>
+        /// <param name="companyModel">Промежуточная модель для передачи данных</param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Create(CompanyModel companyModel)
@@ -38,19 +38,103 @@ namespace Employees.Controllers
             
             _context.Employees.Add(emp);
 
-            DepartmentModel? company = await _context.Departments.FirstOrDefaultAsync(x=>x.Name == companyModel.CompanyName);
-            if (company == null)
+            DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x=>x.Name == companyModel.CompanyName);
+            if (department == null)
             {
-                company = new DepartmentModel() { Name = companyModel.CompanyName };
-                _context.Departments.Add(company);
+                department = new DepartmentModel() { Name = companyModel.CompanyName };
+                _context.Departments.Add(department);
             }
             
-            company.Employees.Add(emp);
+            department.Employees.Add(emp);
 
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Удаление сотрудника
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            var employee = await _context.Employees.FirstOrDefaultAsync(x=>x.Id == id);
+            if (employee != null)
+            {
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Метод возвращает данные для редактирования
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Edit(int ?id)
+        {
+            if (id != null)
+            {
+                var emp = await _context.Employees.Include(x => x.DepartmentModel).FirstOrDefaultAsync(x=>x.Id==id);
+                if (emp != null)
+                    return View(new CompanyModel()
+                    {
+                        Photo = emp.Photo,
+                        CompanyName = emp.DepartmentModel?.Name,
+                        EditId = emp.Id,
+                        FullName = emp.FullName,
+                        PhoneNuber = emp.PhoneNuber
+                    });
+            }
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Метод получает уже отредактированные данные
+        /// </summary>
+        /// <param name="company">Модель</param>
+        /// <param name="id">ID редактированной модели</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Edit(CompanyModel company, int? id)
+        {
+            try
+            {
+                // Поиск модели
+                var emp = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+
+                var department = await _context.Departments.FirstOrDefaultAsync(x => x.Name == company.CompanyName);
+
+                if (emp?.DepartmentModelId != department?.Id)
+                {
+                    emp.DepartmentModelId = department?.Id;
+                    
+                }
+
+                _context.Employees.Update(emp);
+
+                if (department == null)
+                {
+                    department = new DepartmentModel() { Name = company.CompanyName };
+                    _context.Departments.Add(department);
+                }
+
+                department.Employees.Add(emp);
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return await Task.FromResult(BadRequest());
+            }
         }
     }
 

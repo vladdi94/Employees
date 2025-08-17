@@ -6,5 +6,6 @@
         public string? FullName { get; set; }
         public string? PhoneNuber { get; set; }
         public byte[]? Photo { get; set; }
+        public int? EditId { get; set; }
     }
 }
