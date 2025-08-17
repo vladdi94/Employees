@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Employees.Models.Database.EmployeeModel>
+
+<h2>Список сотрудников</h2>
+<p><a asp-action="Create">Добавить сотрудника</a></p>
+<table class="table">
+    <tr><th>ФИО</th><th>Номер телефона</th><th>Отдел</th></tr>
+    
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.FullName</td>
+            <td>@item.PhoneNuber</td>
+            <td>@item.DepartmentModel?.Name</td>
+        </tr>
+    }
+</table>

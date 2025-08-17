@@ -1,0 +1,9 @@
+/.vs
+
+Employees/bin
+Employees/obj
+Employees/Properties
+
+
+/*.pdb
+/netstandard2.0
