@@ -1,4 +1,5 @@
-﻿using Employees.Models.Database;
+﻿using Employees.Models;
+using Employees.Models.Database;
 using Employees.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,7 +21,7 @@ namespace Employees.Controllers
 
         // применение энергичной загрузки навигационных свойств
         [HttpGet]
-        public async Task<IActionResult> Index() => View(await _context.Employees.Include(x=>x.DepartmentModel).ToListAsync());
+        //public async Task<IActionResult> Index() => View(await _context.Employees.Include(x=>x.DepartmentModel).ToListAsync());
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -54,18 +55,6 @@ namespace Employees.Controllers
             // Добавление сотрудника в отдел
             DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x => x.Name == companyModel.CompanyName);
             department?.Employees.Add(emp);
-
-            /*DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x=>x.Name == companyModel.CompanyName);
-            if (department == null)
-            {
-                department = new DepartmentModel() { Name = companyModel.CompanyName };
-                _context.Departments.Add(department);
-            }
-            
-            department.Employees.Add(emp);*/
-
-
-
 
             await _context.SaveChangesAsync();
 
@@ -241,6 +230,26 @@ namespace Employees.Controllers
                 _logger.LogError(ex.ToString());
                 return await Task.FromResult(BadRequest());
             }
+        }
+
+        /// <summary>
+        /// Пагинация
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            // Пагинация
+
+            int pageSize = 50;
+
+            IQueryable<EmployeeModel> employees = _context.Employees.Include(x => x.DepartmentModel);
+            var count = await employees.CountAsync();
+            var items = await employees.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            PageViewModel pageViewModel = new (count, page, pageSize);
+            IndexViewModel viewModel = new (items, pageViewModel);
+            return View(viewModel);
         }
     }
 
