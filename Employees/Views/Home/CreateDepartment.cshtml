@@ -1,0 +1,12 @@
+﻿@model Employees.Models.DTO.CompanyModel;
+
+<h2>Добавление отдела</h2>
+<form asp-action="createdepartment" asp-controller="home">
+    <p>
+        <label asp-for="CompanyName">Название отдела</label><br />
+        <input type="text" asp-for="CompanyName" />
+    </p>
+    <p>
+        <input type="submit" value="Создать" />
+    </p>
+</form>

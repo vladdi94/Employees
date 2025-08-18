@@ -1,0 +1,15 @@
+﻿@model Employees.Models.Database.DepartmentModel;
+
+<h2>Редактирование отдела</h2>
+
+<form asp-action="EditDepartment" asp-controller="home" asp-route-id="@Model.Id">
+
+    <p><h3><label>@Model.Name</label></h3></p>
+    <p>
+        <label asp-for="Name">Новое название</label><br />
+        <input type="text" asp-for="Name" />
+    </p>   
+    <p>
+        <input type="submit" value="Сохранить" />
+    </p>
+</form>

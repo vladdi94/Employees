@@ -1,8 +1,10 @@
 ﻿using Employees.Models.Database;
 using Employees.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Employees.Controllers
 {
@@ -15,11 +17,22 @@ namespace Employees.Controllers
     {
         private readonly ApplicationContext _context = context;
         private readonly ILogger _logger = logger;
-        
+
         // применение энергичной загрузки навигационных свойств
+        [HttpGet]
         public async Task<IActionResult> Index() => View(await _context.Employees.Include(x=>x.DepartmentModel).ToListAsync());
 
-        public IActionResult Create() => View();
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            // Передача данных в представление
+            ViewBag.Department = new SelectList(await _context.Departments.Select(x => x.Name).ToListAsync());
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult CreateDepartment() => View();
 
         /// <summary>
         /// Добавление сотрудника
@@ -38,15 +51,44 @@ namespace Employees.Controllers
             
             _context.Employees.Add(emp);
 
-            DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x=>x.Name == companyModel.CompanyName);
+            // Добавление сотрудника в отдел
+            DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x => x.Name == companyModel.CompanyName);
+            department?.Employees.Add(emp);
+
+            /*DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x=>x.Name == companyModel.CompanyName);
             if (department == null)
             {
                 department = new DepartmentModel() { Name = companyModel.CompanyName };
                 _context.Departments.Add(department);
             }
             
-            department.Employees.Add(emp);
+            department.Employees.Add(emp);*/
 
+
+
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Создание отдела
+        /// </summary>
+        /// <param name="companyModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateDepartment(CompanyModel companyModel)
+        {
+
+            DepartmentModel? department = await _context.Departments.FirstOrDefaultAsync(x => x.Name == companyModel.CompanyName);
+            if (department == null)
+            {
+                department = new DepartmentModel() { Name = companyModel.CompanyName };
+                _context.Departments.Add(department);
+            }
+
+            //department.Employees.Add(emp);
 
             await _context.SaveChangesAsync();
 
@@ -71,6 +113,66 @@ namespace Employees.Controllers
             return NotFound();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteDepartment()
+        {
+            // Передача данных в представление
+            ViewBag.Department = new SelectList(await _context.Departments.Select(x => x.Name).ToListAsync());
+
+            return View();
+        }
+
+        /// <summary>
+        /// Удалить отдел
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> DeleteDepartment(CompanyModel companyModel)
+        {
+            var dep = await _context.Departments.FirstOrDefaultAsync(x=>x.Name==companyModel.CompanyName);
+            if (dep != null)
+            {
+                _context.Departments.Remove(dep);
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListDepartment()
+        {          
+            return View(await _context.Departments.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditDepartment(int ?id)
+        {
+            var dep = await _context.Departments.FirstOrDefaultAsync(x=>x.Id==id);
+            return View(dep);
+        }
+
+        /// <summary>
+        /// Редактирование отдела
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]       
+        public async Task<IActionResult> EditDepartment(DepartmentModel model)
+        {
+            var dep = await _context.Departments.FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (dep != null)
+            {
+                dep.Name = model.Name;
+                _context.Departments.Update(dep);
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+
         /// <summary>
         /// Метод возвращает данные для редактирования
         /// </summary>
@@ -79,6 +181,9 @@ namespace Employees.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int ?id)
         {
+            // Передача данных в представление
+            ViewBag.Department = new SelectList(await _context.Departments.Select(x => x.Name).ToListAsync());
+
             if (id != null)
             {
                 var emp = await _context.Employees.Include(x => x.DepartmentModel).FirstOrDefaultAsync(x=>x.Id==id);
@@ -91,7 +196,8 @@ namespace Employees.Controllers
                         FullName = emp.FullName,
                         PhoneNuber = emp.PhoneNuber
                     });
-            }
+            }         
+
             return NotFound();
         }
 
@@ -118,14 +224,14 @@ namespace Employees.Controllers
                 }
 
                 _context.Employees.Update(emp);
-
+                /*
                 if (department == null)
                 {
                     department = new DepartmentModel() { Name = company.CompanyName };
                     _context.Departments.Add(department);
                 }
 
-                department.Employees.Add(emp);
+                department.Employees.Add(emp);*/
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");

@@ -12,7 +12,7 @@
     </p>
     <p>
         <label asp-for="CompanyName">Департамент</label><br />
-        <input type="text" asp-for="CompanyName" />
+        <select asp-for="CompanyName" asp-items="ViewBag.Department"></select>
     </p>
     <p>
         <input type="submit" value="Создать" />

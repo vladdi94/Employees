@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Employees.Models.Database.DepartmentModel>
+
+<h2>Список отделов</h2>
+<table class="table">
+    <tr><th>Отдел</th></tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>          
+            <td>
+                <a asp-action="EditDepartment" asp-controller="Home" asp-route-id="@item.Id">Изменить</a>
+            </td>           
+        </tr>
+    }
+</table>

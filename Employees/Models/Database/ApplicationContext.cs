@@ -21,8 +21,14 @@ namespace Employees.Models.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DepartmentModel>().Property(x => x.Name).IsRequired();
+            modelBuilder.Entity<DepartmentModel>().
+                Property(x => x.Name).IsRequired();
 
+            // При удалении отдела у модели сотрудников поле отдела в null
+            modelBuilder.Entity<EmployeeModel>().
+                HasOne(x=>x.DepartmentModel).
+                WithMany(x=>x.Employees).
+                OnDelete(DeleteBehavior.SetNull);
         }
 
         protected ApplicationContext()
