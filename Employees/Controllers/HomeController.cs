@@ -19,10 +19,6 @@ namespace Employees.Controllers
         private readonly ApplicationContext _context = context;
         private readonly ILogger _logger = logger;
 
-        // применение энергичной загрузки навигационных свойств
-        [HttpGet]
-        //public async Task<IActionResult> Index() => View(await _context.Employees.Include(x=>x.DepartmentModel).ToListAsync());
-
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -163,7 +159,7 @@ namespace Employees.Controllers
         }
 
         /// <summary>
-        /// Метод возвращает данные для редактирования
+        /// Метод возвращает данные для редактирования сотрудника
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -213,15 +209,7 @@ namespace Employees.Controllers
                 }
 
                 _context.Employees.Update(emp);
-                /*
-                if (department == null)
-                {
-                    department = new DepartmentModel() { Name = company.CompanyName };
-                    _context.Departments.Add(department);
-                }
-
-                department.Employees.Add(emp);*/
-
+               
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -239,8 +227,7 @@ namespace Employees.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(int page = 1)
         {
-            // Пагинация
-
+                       
             int pageSize = 50;
 
             IQueryable<EmployeeModel> employees = _context.Employees.Include(x => x.DepartmentModel);
@@ -252,16 +239,22 @@ namespace Employees.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        /// Фильтрация
+        /// </summary>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> EmployeesList(string searchTerm)
         {
             var company = await _context.Employees.Include(x=>x.DepartmentModel)
                 .Where(p => string.IsNullOrEmpty(searchTerm) ||
-                    p.FullName.ToLower().Contains(searchTerm.ToLower()) || p.PhoneNuber.ToLower().Contains(searchTerm.ToLower()))
+                    p.FullName.ToLower().Contains(searchTerm.ToLower()) || 
+                    p.PhoneNuber.ToLower().Contains(searchTerm.ToLower()))
                 .ToListAsync();
 
             return PartialView("_EmployeeList", company);
-        }
+        }      
     }
 
 }

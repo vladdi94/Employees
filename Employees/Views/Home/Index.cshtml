@@ -1,17 +1,22 @@
 ﻿@model Employees.Models.IndexViewModel
 
+<script src="/lib/jquery/jquery.min.js"></script>
+
 <style>
 td{padding:5px;}
 tr:nth-child(even) {background: #CCC}
 tr:nth-child(odd) {background: #FFF}
 </style>
 
-<h2>Список сотрудников</h2>
-<p><a asp-action="Create">Добавить сотрудника</a></p>
+<h2>Программа - Список сотрудников</h2>
+
+<h2>Отделы</h2>
 <p><a asp-action="CreateDepartment">Добавить отдел</a></p>
 <p><a asp-action="DeleteDepartment">Удалить отдел</a></p>
 <p><a asp-action="ListDepartment">Переименовать отдел</a></p>
 
+<h2>Сотрудники</h2>
+<p><a asp-action="Create">Добавить сотрудника</a></p>
 
 <h3>Фильтры по ФИО и номеру телефона</h3>
 <div class="form-group">
@@ -39,6 +44,23 @@ tr:nth-child(odd) {background: #FFF}
                 });
     }
 </script>
+<p>
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber - 1)" class="glyphicon glyphicon-chevron-left">
+            Назад
+        </a>
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber + 1)" class="glyphicon glyphicon-chevron-right">
+            Вперед
+        </a>
+    }
 
-<script src="/lib/jquery/jquery.min.js"></script>
+</p>
+
+
         
