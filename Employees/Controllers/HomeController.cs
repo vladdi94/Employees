@@ -251,6 +251,17 @@ namespace Employees.Controllers
             IndexViewModel viewModel = new (items, pageViewModel);
             return View(viewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EmployeesList(string searchTerm)
+        {
+            var company = await _context.Employees.Include(x=>x.DepartmentModel)
+                .Where(p => string.IsNullOrEmpty(searchTerm) ||
+                    p.FullName.ToLower().Contains(searchTerm.ToLower()) || p.PhoneNuber.ToLower().Contains(searchTerm.ToLower()))
+                .ToListAsync();
+
+            return PartialView("_EmployeeList", company);
+        }
     }
 
 }

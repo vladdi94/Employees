@@ -17,8 +17,11 @@ builder.Services.AddDbContext<ApplicationContext>(options =>options.UseSqlServer
 builder.Services.AddLogging();
 builder.Services.AddControllersWithViews();
 
+
+
 var app = builder.Build();
 
+app.UseStaticFiles();
 app.MapDefaultControllerRoute();
 
 app.Run();

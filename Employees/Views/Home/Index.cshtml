@@ -1,44 +1,44 @@
 ﻿@model Employees.Models.IndexViewModel
 
+<style>
+td{padding:5px;}
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+</style>
+
 <h2>Список сотрудников</h2>
 <p><a asp-action="Create">Добавить сотрудника</a></p>
 <p><a asp-action="CreateDepartment">Добавить отдел</a></p>
 <p><a asp-action="DeleteDepartment">Удалить отдел</a></p>
 <p><a asp-action="ListDepartment">Переименовать отдел</a></p>
-<table class="table">
-    <tr><th>ФИО</th><th>Номер телефона</th><th>Отдел</th></tr>
-    
-    @foreach (var item in Model.Employees)
+
+
+<h3>Фильтры по ФИО и номеру телефона</h3>
+<div class="form-group">
+    <input type="text" id="search" oninput="FilterByFullName()" placeholder="Введите название" />
+</div>
+
+<div id="employeeList">
+    @await Html.PartialAsync("_EmployeeList", Model.Employees)
+</div>
+
+<script>
+    function FilterByFullName()
     {
-        <tr>
-            <td>@item.FullName</td>
-            <td>@item.PhoneNuber</td>
-            <td>@item.Photo</td>
-            <td>@item.DepartmentModel?.Name</td>
-            <td>
-                <a asp-action="Edit" asp-controller="Home" asp-route-id="@item.Id">Изменить</a>
-            </td>
-            <td>
-                <form asp-controller="Home" asp-action="Delete" method="post" asp-route-id="@item.Id">
-                    <input type="submit" value="Удалить" />
-                </form>
-            </td>
-        </tr>
-    } 
-</table>
-<p>
-    @if (Model.PageViewModel.HasPreviousPage)
-    {
-        <a asp-action="Index"
-           asp-route-page="@(Model.PageViewModel.PageNumber - 1)" class="glyphicon glyphicon-chevron-left">
-            Назад
-        </a>
+        var searchTerm = document.getElementById('search').value;
+         $.ajax({
+                    url: '@Url.Action("EmployeesList", "Home")',
+                    type: 'GET',
+                    data: { searchTerm: searchTerm },
+                    success: function(data) {
+                        $('#employeeList').html(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Ошибка:', error);
+                    }
+                });
     }
-    @if (Model.PageViewModel.HasNextPage)
-    {
-        <a asp-action="Index"
-           asp-route-page="@(Model.PageViewModel.PageNumber + 1)" class="glyphicon glyphicon-chevron-right">
-            Вперед
-        </a>
-    }
-</p>
+</script>
+
+<script src="/lib/jquery/jquery.min.js"></script>
+        
