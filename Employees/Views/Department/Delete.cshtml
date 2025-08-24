@@ -1,0 +1,12 @@
+﻿@model Employees.Models.Database.DepartmentModel;
+
+<h2>Удаление отдела</h2>
+<form method="post" asp-action="delete" asp-controller="department">
+    <p>
+        <label asp-for="Name"></label><br />
+        <select asp-for="Name" asp-items="ViewBag.Department"></select>
+    </p>
+    <p>
+        <input type="submit" value="Удалить" />
+    </p>
+</form>

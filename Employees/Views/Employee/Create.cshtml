@@ -1,0 +1,39 @@
+﻿@model Employees.Models.DTO.CompanyModel;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Добавление сотрудника</h2>
+<form asp-action="create" asp-controller="employee" enctype="multipart/form-data" method="post">
+    <p>
+        <label asp-for="LastName"></label><br />
+        <input type="text" asp-for="LastName" />
+        <span asp-validation-for="LastName" />
+    </p>
+    <p>
+        <label asp-for="FirstName"></label><br />
+        <input type="text" asp-for="FirstName" />
+        <span asp-validation-for="FirstName" />
+    </p>
+    <p>
+        <label asp-for="MiddleName"></label><br />
+        <input type="text" asp-for="MiddleName" />
+        <span asp-validation-for="MiddleName" />
+    </p>   
+    <p>
+        <label asp-for="PhoneNumber"></label><br />
+        <input style="width: 100px;" type="text" asp-for="PhoneNumber" />
+        <span asp-validation-for="PhoneNumber" />
+    </p>
+    <p>
+        <label asp-for="Photo"></label><br />
+        <input type="file" name="file"/>
+    </p>
+    <p>
+        <label asp-for="CompanyName"></label><br />
+        <select asp-for="CompanyName" asp-items="ViewBag.Department"></select>
+    </p>
+    <p>
+        <input type="submit" value="Создать" />
+    </p>
+</form>

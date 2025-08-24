@@ -10,15 +10,17 @@ namespace Employees.Models.Database
         [Key]
         public int Id { get; set; }
 
-        /// <summary>
-        /// ФИО
-        /// </summary>        
-        public string? FullName { get; set; }
+        [MaxLength(30)]
+        public string FirstName { get; set; }
 
-        /// <summary>
-        /// Номер телефона сотрудника
-        /// </summary>
-        public string? PhoneNuber { get; set; }
+        [MaxLength(30)]
+        public string LastName { get; set; }
+
+        [MaxLength(30)]
+        public string? MiddleName { get; set; }
+
+        [MaxLength(20)]
+        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Фотография сотрудника

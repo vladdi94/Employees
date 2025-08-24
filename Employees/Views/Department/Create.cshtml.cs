@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Employees.Views.Home
+namespace Employees.Views.Home.Department
 {
     public class CreateDepartmentModel : PageModel
     {

@@ -10,15 +10,16 @@ namespace Employees.Models.Database
         [Key]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Название отдела
-        /// </summary>
-        public string? Name { get; set; }
+        [Display(Name = "Название отдела")]
+        [Required(ErrorMessage ="Не указано название отдела")]
+        public string Name { get; set; }
 
         // Дочернее навигационное свойство с типом ICollection
         /// <summary>
         /// Список сотрудников в отделе
         /// </summary>
         public List<EmployeeModel> Employees { get; set; } = [];
+
+        
     }
 }

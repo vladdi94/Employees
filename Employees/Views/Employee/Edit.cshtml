@@ -1,0 +1,37 @@
+﻿@model Employees.Models.DTO.CompanyModel;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Редактирование сотрудника</h2>
+<form asp-action="edit" asp-controller="employee" asp-route-id="@Model.EditId" enctype="multipart/form-data" method="post">
+    <p><h3><label>@Model.FirstName</label></h3></p>
+    <p>
+        <label asp-for="LastName"></label><br />
+        <input type="text" asp-for="LastName" />
+        <span asp-validation-for="LastName" />
+    </p>
+    <p>
+        <label asp-for="PhoneNumber"></label><br />
+        <input type="text" asp-for="PhoneNumber" />
+        <span asp-validation-for="PhoneNumber" />
+    </p>
+    <p>
+        <label asp-for="CompanyName"></label><br />
+        <select asp-for="CompanyName" asp-items="ViewBag.Department"></select>
+    </p>
+    <p>
+        @if (Model.Photo != null)
+        {
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Photo)" alt="Фото..." style="width:100px;height:100px;" />
+        }
+    </p>
+    <p>
+        <label asp-for="Photo"></label><br />
+        <input type="file" name="file" />
+    </p>
+    <p>
+        <input type="submit" value="Сохранить" />
+    </p>
+       
+</form>

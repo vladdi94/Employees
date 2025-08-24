@@ -1,0 +1,16 @@
+﻿@model Employees.Models.Database.DepartmentModel;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Добавление отдела</h2>
+<form method="post" asp-action="create" asp-controller="department">
+    <p>
+        <label asp-for="Name"></label><br />
+        <input type="text" asp-for="Name" />
+        <span asp-validation-for="Name"/>
+    </p>
+    <p>
+        <input type="submit" value="Создать" />
+    </p>
+</form>
